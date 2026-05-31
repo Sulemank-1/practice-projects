@@ -52,7 +52,7 @@ public class Main {
                         }
                     } catch (InvalidGPAException e) {
                         System.out.println("Registration Terminated: " + e.getMessage());
-                    } catch (InputMismatchException e) {
+                    } catch (NumberFormatException e) {
                         System.out.println("Invalid numeric input type typed.");
                         input.nextLine();
                     }
