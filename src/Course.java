@@ -87,36 +87,11 @@ public class Course implements Serializable {
     }
 
     public static void saveRoster(String filename, ArrayList<Course> activeCourses) {
-        try (
-                ObjectOutputStream output = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filename)))
-        ) {
-            output.writeObject(activeCourses);
-        } catch (IOException e) {
-            System.out.println("Could not write data to file.  " + e.getMessage());
-        }
+        StorageEngine.saveData(filename, activeCourses);
     }
 
     public static ArrayList<Course> loadRoster(String filename) {
-        File file = new File(filename);
-        if (!file.exists()) {
-            System.out.println("No existing roster record found.");
-            return new ArrayList<>();
-        }
-
-        try (
-                ObjectInputStream input = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))
-        ) {
-            ArrayList<Course> classesRoster = (ArrayList<Course>) (input.readObject());
-            System.out.println("Course records successfully loaded from " + filename);
-            return classesRoster;
-        }catch (ClassNotFoundException ex) {
-            System.out.println("Class definition missing during object reconstruction.");
-        } catch (StreamCorruptedException ex) {
-            System.out.println("The binary file has been modified externally! Load aborted.");
-        } catch (IOException e) {
-        System.out.println("Failed to process serialization stream. " + e.getMessage());
-        }
-        return new ArrayList<>();
+       return StorageEngine.loadData(filename);
     }
 
 }
