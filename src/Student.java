@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class Student extends Person implements Comparable<Student>{
     //Data Fields
     private double gpa;
@@ -34,6 +36,21 @@ public class Student extends Person implements Comparable<Student>{
     @Override
     public int compareTo(Student o){
         return Double.compare(o.getGpa(), getGpa());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Student student = (Student) o;
+        return getId() == student.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId()); // Generates a unique hash index based entirely on the ID
     }
 
     public boolean validGPA(double gpa){
