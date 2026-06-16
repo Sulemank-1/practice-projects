@@ -6,7 +6,7 @@ public class Course implements Serializable {
     private String courseCode;
     private String title;
     private Faculty instructor;
-    private ArrayList<Student> enrolledStudents;
+    private Set<Student> enrolledStudents;
     private final int MAX_SEATS = 3;
 
     //Constructor
@@ -14,7 +14,7 @@ public class Course implements Serializable {
         this.courseCode = courseCode;
         this.title = title;
         this.instructor = instructor;
-        enrolledStudents = new ArrayList<>();
+        enrolledStudents = new HashSet<>();
     }
 
     //Getters
@@ -30,7 +30,7 @@ public class Course implements Serializable {
         return instructor;
     }
 
-    public ArrayList<Student> getEnrolledStudents() {
+    public Set<Student> getEnrolledStudents() {
         return enrolledStudents;
     }
 
@@ -53,12 +53,11 @@ public class Course implements Serializable {
             System.out.println("Course seats full");
             return false;
         }
-        for (Student student: enrolledStudents)
-            if (student.getId() == s.getId()){
-                System.out.println("Student ID already present");
-                return false;
-            }
-        enrolledStudents.add(s);
+        boolean isAdded = enrolledStudents.add(s);
+        if (!isAdded){
+            System.out.println("Student ID already exists");
+            return false;
+        }
         return true;
     }
 
@@ -93,5 +92,4 @@ public class Course implements Serializable {
     public static ArrayList<Course> loadRoster(String filename) {
        return StorageEngine.loadData(filename);
     }
-
 }
