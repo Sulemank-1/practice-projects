@@ -19,6 +19,8 @@ public class GymManager {
     }
 
     //Methods
+
+    //Add a member to gym
     public void addMember(Member m){
          if (members.size() >= TOTAL_CAPACITY)
              System.out.println("Members full");
@@ -33,6 +35,7 @@ public class GymManager {
          }
      }
 
+     //Remove a member from gym
     public boolean removeMember(int memberID){
          for (Member member: members)
              if (member.getMemberID() == memberID){
@@ -43,6 +46,7 @@ public class GymManager {
          return false;
     }
 
+    //Find a member of gym
     public Member findMember(int memberID){
         for (Member member: members)
             if (member.getMemberID() == memberID)
@@ -51,29 +55,31 @@ public class GymManager {
         return null;
     }
 
+    //Calculate total revenue
     public double calculateTotalRevenue(){
-         double sum = 0.0;
-         for (Member member: members)
-            sum += member.calculateMonthlyDues();
-
-         return sum;
+         return members.stream()
+                 .mapToDouble(Member::calculateMonthlyDues)
+                 .sum();
     }
 
+    //Check member size
     public int getMemberCount(){
          return members.size();
     }
 
+    //Display list of all members
     public void displayAllMembers(){
-         ArrayList<Member> sortedList = new ArrayList<>(members);
-         Collections.sort(sortedList);
-         for (Member member: sortedList)
-            System.out.println(member);
+         members.stream()
+                 .sorted()
+                 .forEach(System.out::println);
     }
 
+    //Save members list to file
     public void saveMembersToFile(String filename) {
         StorageEngine.saveData(filename, members);
     }
 
+    //Load members list from file
     public void loadMembersFromFile(String filename) {
         members = StorageEngine.loadData(filename);
     }
