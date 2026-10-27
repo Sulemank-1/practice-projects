@@ -48,6 +48,8 @@ public class Course implements Serializable {
     }
 
     //Methods
+
+    //Register a student in the course
     public boolean registerStudent(Student s){
         if (enrolledStudents.size() >= MAX_SEATS){
             System.out.println("Course seats full");
@@ -61,6 +63,7 @@ public class Course implements Serializable {
         return true;
     }
 
+    // Drop a student from course
     public boolean dropStudent(int studentID){
         for (Student student: enrolledStudents)
             if (student.getId() == studentID) {
@@ -71,24 +74,26 @@ public class Course implements Serializable {
         return false;
     }
 
+    //Display class roster
     public void displayClassRoster(){
         System.out.println("Instructor Name: " + instructor.getName());
         System.out.println("Number of students in course: " + enrolledStudents.size());
-        for (Student student: enrolledStudents)
-            System.out.println(student);
+        enrolledStudents.forEach(System.out::println);
     }
 
+    //Display students sorted by gpa
     public void displayGpaLeaderboard(){
-        ArrayList<Student> sortedList = new ArrayList<>(enrolledStudents);
-        Collections.sort(sortedList);
-        for (Student student: sortedList)
-            System.out.println(student);
+        enrolledStudents.stream()
+                .sorted()
+                .forEach(System.out::println);
     }
 
+    //Save roster to file
     public static void saveRoster(String filename, ArrayList<Course> activeCourses) {
         StorageEngine.saveData(filename, activeCourses);
     }
 
+    //Load roster from file
     public static ArrayList<Course> loadRoster(String filename) {
        return StorageEngine.loadData(filename);
     }
