@@ -3,8 +3,8 @@ import java.util.*;
 
 public class FleetManager {
     //Data Fields
-    private String agencyName;
-    private Map<String, Vehicle> fleet;
+    private String agencyName; //Agency Name
+    private Map<String, Vehicle> fleet; //Vehicle fleet
 
     //Constructor
     public FleetManager(String agencyName){
@@ -23,16 +23,19 @@ public class FleetManager {
     }
 
     //Methods
-    public void addVehicle(Vehicle v){
-        String standardizedPlate = v.getLicensePlate().toLowerCase().trim();
 
-        if (fleet.containsKey(standardizedPlate)){
+    //Add a vehicle to fleet
+    public void addVehicle(Vehicle v){
+        String plate = v.getLicensePlate().toLowerCase().trim();
+
+        if (fleet.containsKey(plate)){
             System.out.println("Duplicate Licence Plate");
             return;
         }
         fleet.put(v.getLicensePlate(), v);
     }
 
+    //Process vehicle rental
     public boolean processRental(String plate, String customerName) {
         String standardizedPlate = plate.toLowerCase().trim();
         if (fleet.containsKey(standardizedPlate)) {
@@ -51,6 +54,7 @@ public class FleetManager {
         return false;
     }
 
+    //Process vehicle return
     public boolean processReturn(String plate) {
         String standardizedPlate = plate.toLowerCase().trim();
         if (fleet.containsKey(standardizedPlate)) {
@@ -76,23 +80,25 @@ public class FleetManager {
         return false;
     }
 
+    //Calculate total fleet value of rented vehicles
     public double calculateTotalFleetValue(){
-        double sum = 0.0;
-        for (Vehicle vehicle: fleet.values())
-            if (vehicle.isRented())
-                sum += vehicle.getDailyRate();
-        return sum;
+        return fleet.values().stream()
+                .filter(Vehicle::isRented)
+                .mapToDouble(Vehicle::getDailyRate)
+                .sum();
     }
 
+    //Display each vehicle of fleet
     public void displayFleetStatus(){
-        for (Vehicle vehicle: fleet.values())
-            System.out.println(vehicle);
+        fleet.values().forEach(System.out::println);
     }
 
+    //Save fleet data to file
     public void saveFleet(String filename){
         StorageEngine.saveData(filename, fleet);
     }
 
+    //Load fleet data from file
     public void loadFleet(String filename) {
         fleet = StorageEngine.loadData(filename);
         if (!fleet.isEmpty()) {
