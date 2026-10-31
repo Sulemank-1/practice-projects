@@ -17,6 +17,12 @@ public class Task {
         this.createdAt = new Date();
     }
 
+    public Task(int id, String description, Status status){
+        this.id = id;
+        this.description = description;
+        this.status = status;
+    }
+
     //Getters
     public int getId(){
         return id;

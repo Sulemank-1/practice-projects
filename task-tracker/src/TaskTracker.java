@@ -1,7 +1,7 @@
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.regex.*;
 
 public class TaskTracker {
     public static void main(String[] args) {
@@ -22,6 +22,7 @@ public class TaskTracker {
             return;
         }
         TaskTracker tracker = new TaskTracker();
+        tracker.loadFromFile();
         String description;
         int id;
         try {
@@ -45,8 +46,9 @@ public class TaskTracker {
                     }
                     break;
                 case "list":
-                    if (!tracker.tasks.isEmpty())
+                    if (!tracker.tasks.isEmpty()) {
                         tracker.listTasks();
+                    }
                     else
                         System.out.println("No tasks found");
                 break;
@@ -57,6 +59,7 @@ public class TaskTracker {
                         id = Integer.parseInt(args[1]);
                         tracker.deleteTask(id);
                     }
+                break;
                 case "mark-in-progress":
                     if (args.length < 2)
                         System.out.println("Incomplete Command");
@@ -64,6 +67,7 @@ public class TaskTracker {
                         id = Integer.parseInt(args[1]);
                         tracker.updateTaskStatus(id, Status.IN_PROGRESS);
                     }
+                break;
                 case "mark-done":
                     if (args.length < 2)
                         System.out.println("Incomplete Command");
@@ -71,6 +75,7 @@ public class TaskTracker {
                         id = Integer.parseInt(args[1]);
                         tracker.updateTaskStatus(id, Status.DONE);
                     }
+                break;
                 default:
                     System.out.println("Invalid command");
             }
@@ -82,11 +87,13 @@ public class TaskTracker {
 
     }
 
+    //Add a task
     public void addTask(String description){
         if (tasks.add(new Task(description)))
             System.out.println("Task added.");
     }
 
+    //Update task
     public boolean updateTask(int id, String description){
         for (Task task: tasks){
             if (task.getId() == id){
@@ -99,6 +106,7 @@ public class TaskTracker {
         return false;
     }
 
+    //Update task status
     public boolean updateTaskStatus(int id, Status status){
         for (Task task: tasks){
             if (task.getId() == id){
@@ -111,6 +119,7 @@ public class TaskTracker {
         return false;
     }
 
+    //Delete task
     public boolean deleteTask(int id){
         for (Task task: tasks){
             if (task.getId() == id){
@@ -123,12 +132,14 @@ public class TaskTracker {
         return false;
     }
 
+    //List all tasks
     public void listTasks(){
         for (Task task: tasks){
             System.out.println(task);
         }
     }
 
+    //Save tasks to file
     public void saveToFile(){
         try {
             List<String> taskList = new ArrayList<>();
@@ -152,17 +163,25 @@ public class TaskTracker {
         }
     }
 
+    //Load files from task
     public void loadFromFile(){
         Path path = Paths.get("tasks.json");
         try {
-            String taskString;
+            String taskString = "";
             if (Files.exists(path))
                 taskString = Files.readString(path);
-            taskString.replace("[")
-        }catch (IOException ex){
-            System.out.println(ex);
+
+            String regex = "\"id\"\\s*:\\s*(\\d+),\\s*\"description\"\\s*:\\s*\"([^\"]*)\",\\s*\"status\"\\s*:\\s*\"([^\"]*)\"";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(taskString);
+            while (matcher.find()) {
+                int id = Integer.parseInt(matcher.group(1));
+                String description = matcher.group(2);
+                Status status = Status.valueOf(matcher.group(3));
+                tasks.add(new Task(id, description, status));
+            }
+        } catch (IOException ex) {
+            System.out.println(ex);;
         }
-
-
     }
 }
