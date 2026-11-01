@@ -7,11 +7,11 @@ public class Task {
     private Status status;
     private Date createdAt;
     private Date updatedAt;
-    private static int maxId = 0;
+    private static int maxId = 1;
 
-    //Constructor
+    //Constructors
     public Task(String description){
-        this.id = ++maxId;
+        this.id = maxId++;
         this.description = description;
         this.status = Status.TO_DO;
         this.createdAt = new Date();
@@ -51,10 +51,14 @@ public class Task {
         this.updatedAt = new Date();
     }
 
+    public static void setMaxId(int newMaxId) {
+        maxId = newMaxId;
+    }
+
 
     //Methods
     @Override
     public String toString(){
-        return getId() +": " + getDescription() + " Status: " + getStatus();
+        return getId() +": " + getDescription() + ", " + getStatus();
     }
 }

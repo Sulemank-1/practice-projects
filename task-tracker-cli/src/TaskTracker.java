@@ -8,14 +8,17 @@ public class TaskTracker {
         getArguments(args);
     }
 
+    //Data Fields
     private ArrayList<Task> tasks;
 
-
+    //Constructor
     public TaskTracker(){
         tasks = new ArrayList<>();
     }
 
+    //Methods
 
+    //Driver method
     public static void getArguments(String[] args) {
         if (args.length == 0){
             System.out.println("No commands found");
@@ -23,8 +26,8 @@ public class TaskTracker {
         }
         TaskTracker tracker = new TaskTracker();
         tracker.loadFromFile();
-        String description;
         int id;
+        String description;
         try {
             switch (args[0]){
                 case "add":
@@ -43,21 +46,39 @@ public class TaskTracker {
                         id = Integer.parseInt(args[1]);
                         description = args[2];
                         tracker.updateTask(id, description);
+                        tracker.saveToFile();
                     }
                     break;
                 case "list":
-                    if (!tracker.tasks.isEmpty()) {
-                        tracker.listTasks();
-                    }
-                    else
+                    if (tracker.tasks.isEmpty())
                         System.out.println("No tasks found");
-                break;
+                    else {
+                        if (args.length == 1){
+                            tracker.listTasks();
+                        } else if (args.length == 2) {
+                            switch (args[1]){
+                                case "done":
+                                    tracker.listByStatus(Status.DONE);
+                                break;
+                                case "todo":
+                                    tracker.listByStatus(Status.TO_DO);
+                                break;
+                                case "in-progress":
+                                    tracker.listByStatus(Status.IN_PROGRESS);
+                                break;
+                                default:
+                                    System.out.println("Invalid command");
+                            }
+                        }
+                    }
+                    break;
                 case "delete":
                     if (args.length < 2)
                         System.out.println("Incomplete Command");
                     else{
                         id = Integer.parseInt(args[1]);
                         tracker.deleteTask(id);
+                        tracker.saveToFile();
                     }
                 break;
                 case "mark-in-progress":
@@ -66,6 +87,7 @@ public class TaskTracker {
                     else{
                         id = Integer.parseInt(args[1]);
                         tracker.updateTaskStatus(id, Status.IN_PROGRESS);
+                        tracker.saveToFile();
                     }
                 break;
                 case "mark-done":
@@ -74,6 +96,7 @@ public class TaskTracker {
                     else{
                         id = Integer.parseInt(args[1]);
                         tracker.updateTaskStatus(id, Status.DONE);
+                        tracker.saveToFile();
                     }
                 break;
                 default:
@@ -93,7 +116,7 @@ public class TaskTracker {
             System.out.println("Task added.");
     }
 
-    //Update task
+    //Update a task
     public boolean updateTask(int id, String description){
         for (Task task: tasks){
             if (task.getId() == id){
@@ -106,7 +129,7 @@ public class TaskTracker {
         return false;
     }
 
-    //Update task status
+    //Update a task's status
     public boolean updateTaskStatus(int id, Status status){
         for (Task task: tasks){
             if (task.getId() == id){
@@ -134,10 +157,16 @@ public class TaskTracker {
 
     //List all tasks
     public void listTasks(){
-        for (Task task: tasks){
-            System.out.println(task);
-        }
+        tasks.forEach(System.out::println);
     }
+
+    //List tasks by status
+    public void listByStatus(Status status){
+        tasks.stream()
+                .filter(e -> e.getStatus() == status)
+                .forEach(System.out::println);
+    }
+
 
     //Save tasks to file
     public void saveToFile(){
@@ -174,12 +203,17 @@ public class TaskTracker {
             String regex = "\"id\"\\s*:\\s*(\\d+),\\s*\"description\"\\s*:\\s*\"([^\"]*)\",\\s*\"status\"\\s*:\\s*\"([^\"]*)\"";
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(taskString);
+            int highestId = 0;
             while (matcher.find()) {
                 int id = Integer.parseInt(matcher.group(1));
                 String description = matcher.group(2);
                 Status status = Status.valueOf(matcher.group(3));
                 tasks.add(new Task(id, description, status));
+                if (id > highestId)
+                    highestId = id;
             }
+            Task.setMaxId(highestId + 1);
+
         } catch (IOException ex) {
             System.out.println(ex);;
         }
