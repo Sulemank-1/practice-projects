@@ -36,11 +36,17 @@ public class ExpenseTrackerCli implements Runnable {
         @Option(names = {"--amount"}, required = true, description = "Expense amount")
         private double amount;
 
+        @Option(names = {"--category"}, description = "Expense category")
+        private String category;
+
         @Override
         public void run() {
+            ExpenseTracker expenseTracker = new ExpenseTracker();
             if (amount > 0){
-                ExpenseTracker expenseTracker = new ExpenseTracker();
-                expenseTracker.addExpense(amount, description);
+                if (category != null)
+                    expenseTracker.addExpense(amount, description, category);
+                else
+                    expenseTracker.addExpense(amount, description);
                 System.out.println("Expense added successfully");
             }else
                 System.out.println("Error: Amount must greater than zero");
@@ -50,10 +56,17 @@ public class ExpenseTrackerCli implements Runnable {
 
     @Command(name = "list", description = "List all expenses")
     static class ListCommand implements Runnable {
+        @Option(names = {"--category"}, description = "List expenses in this category")
+        String category;
+
         @Override
         public void run() {
             ExpenseTracker expenseTracker = new ExpenseTracker();
-            expenseTracker.listExpenses();
+
+            if (category != null)
+                expenseTracker.listExpenses(category);
+            else
+                expenseTracker.listExpenses();
         }
     }
 
@@ -70,7 +83,7 @@ public class ExpenseTrackerCli implements Runnable {
             } else if (month < 1 || month > 12) {
                 System.out.println("Error: Month must be between 1 and 12.");
             } else {
-                expenseTracker.summaryByMonth(month);
+                expenseTracker.expensesSummary(month);
             }
         }
     }
