@@ -30,6 +30,13 @@ public class ExpenseTracker {
         return true;
     }
 
+    //Add an expense with category
+    public boolean addExpense(double amount, String description, String category) {
+        expenses.add(new Expense(amount, description, category));
+        saveToFile();
+        return true;
+    }
+
     //Delete an expense
     public boolean deleteExpense(int id){
         boolean removed  = expenses.removeIf(e -> e.getId() == id);
@@ -44,10 +51,23 @@ public class ExpenseTracker {
     //View all expenses
     public void listExpenses(){
         if (!expenses.isEmpty()){
-            System.out.println("ID  Date  Description  Amount");
+            System.out.println("ID  Date  Description  Amount  Category");
             expenses.forEach(System.out::println);
         }else
             System.out.println("No expenses found");
+
+    }
+
+    //View expenses by category
+    public void listExpenses(String category){
+        List<Expense> expenseList = expenses.stream()
+                .filter(e -> category.equals(e.getCategory()))
+                .toList();
+        if (!expenseList.isEmpty()){
+            System.out.println("ID  Date  Description  Amount  Category");
+            expenseList.forEach(System.out::println);
+        }else
+            System.out.println("No expenses found in this category");
 
     }
 
@@ -60,7 +80,7 @@ public class ExpenseTracker {
     }
 
     //View expenses summary of a month
-    public void summaryByMonth(int month){
+    public void expensesSummary(int month){
         double sum = expenses.stream()
                 .filter(e -> e.getCreatedAt().getMonthValue() == month)
                 .mapToDouble(Expense::getAmount)
