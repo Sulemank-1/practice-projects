@@ -1,21 +1,14 @@
 package org.example;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 import java.time.Month;
 
 public class ExpenseTracker {
-    static void main(String[] args) {
-        getArgs(args);
-    }
-
     private List<Expense> expenses;
     private static File file = new File("expenses.json");
     private static ObjectMapper objectMapper = new ObjectMapper();
@@ -27,68 +20,7 @@ public class ExpenseTracker {
 
     public ExpenseTracker(){
         expenses = new ArrayList<>();
-    }
-
-    public static void getArgs(String[] args){
-        if (args.length == 0){
-            System.out.println("No commands provided");
-            return;
-        }
-
-        ExpenseTracker expenseTracker = new ExpenseTracker();
-        expenseTracker.loadFromFile();
-        String description = "";
-        double amount = 0.0;
-        try {
-            switch (args[0].toLowerCase()){
-                case "add":
-                    if (args.length < 2){
-                        System.out.println("Incomplete command");
-                        return;
-                    }
-                    if (args[1].toLowerCase().equals("--description")){
-                        description = args[2];
-                        if (args[3].toLowerCase().equals("--amount")){
-                            amount = Double.parseDouble(args[4]);
-                            if (expenseTracker.addExpense(amount, description))
-                                System.out.println("Expense added");
-                        }
-                        else
-                            System.out.println("Invalid command");
-                    }else
-                        System.out.println("Invalid command");
-                    break;
-                case "list":
-                    expenseTracker.listExpenses();
-                    break;
-                case "summary":
-                    if (args.length == 1)
-                        expenseTracker.expensesSummary();
-                    else if (args[1].equals("--month")){
-                        int month = Integer.parseInt(args[2]);
-                        expenseTracker.summaryByMonth(month);
-                    }else
-                        System.out.println("Invalid command");
-                    break;
-                case "delete":
-                    int id = 0;
-                    if (args.length < 2){
-                        System.out.println("Incomplete command");
-                        return;
-                    }
-                    if (args[1].equals("--equals")){
-                        id  = Integer.parseInt(args[2]);
-                        if (expenseTracker.deleteExpense(id))
-                            System.out.println("Expense deleted");
-                    }else
-                        System.out.println("Invalid command");
-                    break;
-            }
-        }catch (IllegalArgumentException ex){
-            System.out.println(ex);
-        }
-
-
+        loadFromFile();
     }
 
     //Add an expense
