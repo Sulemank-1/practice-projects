@@ -23,6 +23,7 @@ public class ExpenseTrackerCli implements Runnable {
         System.exit(exitCode);
     }
 
+    private static final ExpenseTracker expenseTracker = new ExpenseTracker();
     @Override
     public void run() {
         System.out.println("Please specify a command (add, list, summary, delete). Use --help for usage.");
@@ -41,7 +42,6 @@ public class ExpenseTrackerCli implements Runnable {
 
         @Override
         public void run() {
-            ExpenseTracker expenseTracker = new ExpenseTracker();
             if (amount > 0){
                 if (category != null)
                     expenseTracker.addExpense(amount, description, category);
@@ -61,8 +61,6 @@ public class ExpenseTrackerCli implements Runnable {
 
         @Override
         public void run() {
-            ExpenseTracker expenseTracker = new ExpenseTracker();
-
             if (category != null)
                 expenseTracker.listExpenses(category);
             else
@@ -77,7 +75,6 @@ public class ExpenseTrackerCli implements Runnable {
 
         @Override
         public void run() {
-            ExpenseTracker expenseTracker = new ExpenseTracker();
             if (month == null) {
                 expenseTracker.expensesSummary();
             } else if (month < 1 || month > 12) {
@@ -96,9 +93,10 @@ public class ExpenseTrackerCli implements Runnable {
         @Override
         public void run() {
             if (id >= 0){
-                ExpenseTracker expenseTracker = new ExpenseTracker();
-                expenseTracker.deleteExpense(id);
-                System.out.println("Expense deleted successfully");
+                boolean deleted = expenseTracker.deleteExpense(id);
+                if (deleted) {
+                    System.out.println("Expense deleted successfully");
+                }
             }else
                 System.out.println("Error: Enter valid ID");
         }

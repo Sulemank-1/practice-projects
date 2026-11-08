@@ -61,7 +61,7 @@ public class ExpenseTracker {
     //View expenses by category
     public void listExpenses(String category){
         List<Expense> expenseList = expenses.stream()
-                .filter(e -> category.equals(e.getCategory()))
+                .filter(e -> e.getCategory() != null && e.getCategory().equalsIgnoreCase(category))
                 .toList();
         if (!expenseList.isEmpty()){
             System.out.println("ID  Date  Description  Amount  Category");
