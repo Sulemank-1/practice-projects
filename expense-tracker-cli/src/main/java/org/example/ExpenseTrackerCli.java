@@ -82,9 +82,12 @@ public class ExpenseTrackerCli implements Runnable {
 
         @Override
         public void run() {
-            ExpenseTracker expenseTracker = new ExpenseTracker();
-            expenseTracker.deleteExpense(id);
-            System.out.println("Expense deleted successfully");
+            if (id >= 0){
+                ExpenseTracker expenseTracker = new ExpenseTracker();
+                expenseTracker.deleteExpense(id);
+                System.out.println("Expense deleted successfully");
+            }else
+                System.out.println("Error: Enter valid ID");
         }
     }
 }
