@@ -3,4 +3,4 @@ out/
 *.json
 *.class
 *.txt
-github-user-activity-cli/target/
+**/target/
