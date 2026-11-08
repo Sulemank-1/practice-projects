@@ -4,3 +4,5 @@
   * [Project Link](https://roadmap.sh/projects/task-tracker)
 * [GitHub User Activity CLI](./github-user-activity-cli)
   * [Project Link](https://roadmap.sh/projects/github-user-activity)
+* [Expense Tracker CLI](./expense-tracker-cli)
+  * [Project Link](https://roadmap.sh/projects/expense-tracker)
