@@ -13,18 +13,16 @@ public class Game {
 
     //Methods
     public boolean guessNumber(int guess){
+        attempts++;
         if (guess == number){
-            attempts++;
             System.out.println("Congratulations! You guessed the correct number in "  + attempts + " attempts.");
             return true;
         }
         else if (number > guess){
             System.out.println("Incorrect! The number is greater than " + guess);
-            attempts++;
         }
         else if (number < guess){
             System.out.println("Incorrect! The number is less than " + guess);
-            attempts++;
         }
         return false;
     }
